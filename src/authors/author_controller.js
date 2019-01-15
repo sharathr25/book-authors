@@ -1,13 +1,27 @@
-const db = require('../common/get_db_data.js');
+const fetch = require('node-fetch');
+const url = require('../../config/url');
 
 async function getAuthorsData() {
-  const sql = 'select * from authors';
-  return db.executeQuery(sql);
+  let authors;
+  try {
+    const responce = await fetch(url.authorsUrl);
+    authors = await responce.json();
+  } catch (err) {
+    console.log(err);
+  }
+  return authors;
 }
 
 async function getAuthorDataById(id) {
-  const sql = 'select a.*,b.* from authors as a,books as b where b.author_id=a.id and a.id=?';
-  return db.executeQuery(sql, [id]);
+  let author;
+  try {
+    const authorUrl = `${url.authorsUrl}${id}`;
+    const responce = await fetch(authorUrl);
+    author = await responce.json();
+  } catch (err) {
+    console.log(err);
+  }
+  return author;
 }
 
 module.exports = {

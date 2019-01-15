@@ -14,7 +14,7 @@ function cacheClear(req, res, next) {
 }
 
 function log(req, res, next) {
-  logger.log('info', req.url);
+  logger.log('info', `${req.method} ${req.url}`);
   next();
 }
 

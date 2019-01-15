@@ -7,7 +7,7 @@ const route = express.Router();
 route.get('/authors', middleware.redirectLogin, async (req, res) => {
   try {
     const data = await author.getAuthors();
-    res.status(200).render('authors', { authordata: data[0] });
+    res.status(200).render('authors', { authordata: data });
   } catch (err) {
     res.status(200).send('some error happend please go back');
   }
@@ -20,7 +20,7 @@ route.get('/author/:id', middleware.redirectLogin, async (req, res) => {
     const data = await author.getAuthorById(authorId);
     if (typeof data !== 'undefined' && data[0].length === 0) {
       res.status(404).send('AUTHOR NOT FOUND');
-    } else res.status(200).render('author_details', { data: data[0] });
+    } else res.status(200).render('author_details', { data });
   } else {
     res.status(404).send('AUTHOR NOT FOUND');
   }

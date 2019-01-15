@@ -1,58 +1,51 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const User = require('../../models/user');
+const fetch = require('node-fetch');
+const urls = require('../../config/url');
 
-function hash(data) {
-  const saltRounds = 10;
-  return bcrypt.hashSync(data, saltRounds);
-}
-
-function comapare(password, user) {
-  if (bcrypt.compareSync(password, user.password)) { return true; }
+function compare(password, userPassword) {
+  if (bcrypt.compareSync(password, userPassword)) { return true; }
   return false;
 }
 
-let mongoDB;
-async function getConnection() {
-  const url = 'mongodb://127.0.0.1:27017/users';
-  const testUrl = `mongodb://127.0.0.1:27017/${process.env.DATABASE}`;
-  mongoDB = typeof process.env.DATABASE !== 'undefined' ? testUrl : url;
-  mongoose.connect(mongoDB, { useNewUrlParser: true });
-  mongoose.Promise = global.Promise;
-}
-
 async function addUsertoDb(userFormData) {
-  getConnection();
-  const hashPassword = hash(userFormData.password);
-  const user = new User({
-    _id: mongoose.Types.ObjectId(),
-    username: `${userFormData.username}`,
-    email: `${userFormData.email}`,
-    password: `${hashPassword}`,
-  });
-  let data;
+  let userData;
   try {
-    data = await user.save();
-  } catch (err) {
+    const responce = await fetch(urls.signUpUrl, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, cors, *same-origin
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userFormData),
+    });
+    userData = await responce.json();
+  } catch (error) {
     console.log('some error occurred');
   }
-  await mongoose.connection.close();
-  return data;
+  return userData;
 }
 
 async function findUserFromDb(user) {
-  getConnection();
-  let data;
+  let userData;
   try {
-    data = await User.find({ email: `${user.email}` });
-  } catch (err) {
+    const responce = await fetch(urls.loginUrl, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, cors, *same-origin
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    userData = await responce.json();
+  } catch (error) {
     console.log('some error occurred');
   }
-  await mongoose.connection.close();
-  return data;
+  return userData;
 }
 
-async function checkPassword(password1, password2) {
+function checkPassword(password1, password2) {
   if (password1 === password2) {
     return false;
   }
@@ -63,5 +56,5 @@ module.exports = {
   addUser: addUsertoDb,
   findUser: findUserFromDb,
   checkPasswordMismatch: checkPassword,
-  comparePassword: comapare,
+  comparePassword: compare,
 };

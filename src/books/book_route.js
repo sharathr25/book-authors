@@ -8,7 +8,7 @@ const route = express.Router();
 route.get('/books', middleware.redirectLogin, async (req, res) => {
   try {
     const booksData = await book.getBooks();
-    res.status(200).render('books', { data: booksData[0] });
+    res.status(200).render('books', { data: booksData });
   } catch (error) {
     res.status(500).send('some error happend please go back');
   }
@@ -27,7 +27,7 @@ route.get('/bookisbn/:isbn', middleware.redirectLogin, async (req, res) => {
       const totalRatings = bookReview[1];
       const widget = bookReview[2];
       res.status(200).set('content-type', 'text/html').render('book_details', {
-        data: bookData[0], rating, totalRatings, widget,
+        data: bookData, rating, totalRatings, widget,
       });
     }
   } else {

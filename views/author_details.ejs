@@ -39,13 +39,15 @@
                     <td>PLACE</td>
                     <td><%= data[0].place %></td>
               </tr>
+              <% if(data[0].title !== 'undefined') { %>
               <tr>
                 <td>BOOKS</td>
                 <td><% for(let i=0; i < data.length; i++) { %>
-                    <p><a href="/bookisbn/<%=data[i].isbn %>"><%=  data[i].title %></a></p>
+                    <p><a href="/bookisbn/<%=data[i].isbn%>"><%=  data[i].title %></a></p>
                     <% } %>
                 </td>
               </tr>
+            <% } %>
           </tbody>
         </table>
         </div>

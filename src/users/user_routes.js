@@ -20,11 +20,11 @@ route.get('/logout', (req, res) => {
 route.post('/login', middleware.validateLogin, async (req, res) => {
   const formData = req.body;
   const data = await user.findUser(formData);
-  if (data.length > 0) {
-    if (user.comparePassword(formData.password, data[0])) {
-      req.session.email = data[0].email;
-      req.session.name = data[0].username;
-      res.status(200).render('home', { data: data[0].username });
+  if (data.message === 'valid user') {
+    if (user.comparePassword(formData.password, data.user.password)) {
+      req.session.email = data.user.email;
+      req.session.name = data.user.username;
+      res.status(200).render('home', { data: data.user.username });
     } else {
       res.status(401).send('incorrect password');
     }
@@ -40,7 +40,7 @@ route.post('/signup', middleware.validateSignUp, async (req, res) => {
     return;
   }
   const data = await user.findUser(formData);
-  if (data.length === 0) {
+  if (data.message === 'invalid user') {
     user.addUser(formData);
     res.status(200).render('login');
   } else { res.status(200).send('your already registered please <a href="/login">LOGIN</a>'); }

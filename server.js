@@ -2,7 +2,6 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const logger = require('./config/logger.js');
-
 const bookRoute = require('./src/books/book_route.js');
 const authorRoute = require('./src/authors/author_route.js');
 const userRoute = require('./src/users/user_routes.js');
@@ -34,7 +33,7 @@ app.use(authorRoute);
 app.use(userRoute);
 app.use(routes);
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8000;
 
 const server = app.listen(port, () => {
   logger.log('info', `app listening at port ${port}`);
